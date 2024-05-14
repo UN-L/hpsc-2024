@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <vector>
 
-__global__ void bucketSort(int range, int n, int bucket[], int key[], int offset[])
+__global__ void bucketSort(int range, int bucket[], int key[], int offset[])
 {
   int i = threadIdx.x;
   for (int j = 1; j<range; j<<=1) {
@@ -19,7 +19,7 @@ int main()
   int n = 50;
   int range = 5;
   int *key;
-  cudaMallocManaged(&key, range*sizeof(int));
+  cudaMallocManaged(&key, n*sizeof(int));
 
   for (int i=0; i<n; i++) {
     key[i] = rand() % range;
@@ -38,7 +38,7 @@ int main()
   for (int i=0; i<n; i++) {
     bucket[key[i]]++;
   }
-  bucketSort<<<1, range>>>(range, n, bucket, key, offset);
+  bucketSort<<<1, n>>>(range, bucket, key, offset);
   cudaDeviceSynchronize();
 
   for (int i=0; i<n; i++) {
