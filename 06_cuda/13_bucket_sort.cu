@@ -2,6 +2,18 @@
 #include <cstdlib>
 #include <vector>
 
+__global__ void init(int bucket[])
+{
+  int i = threadIdx.x;
+  bucket[i] = 0;
+}
+
+__global__ void increment(int bucket[], int key[])
+{
+  int i = threadIdx.x;
+  atomicAdd(&bucket[key[i]], 1);
+}
+
 __global__ void bucketSort(int range, int bucket[], int key[], int offset[])
 {
   int i = threadIdx.x;
@@ -32,12 +44,13 @@ int main()
   cudaMallocManaged(&bucket, range*sizeof(int));
   int *offset;
   cudaMallocManaged(&offset, range*sizeof(int)); 
-  for (int i=0; i<range; i++) {
-    bucket[i] = 0;
-  }
-  for (int i=0; i<n; i++) {
-    bucket[key[i]]++;
-  }
+
+  init<<<1, range>>>(bucket);
+  cudaDeviceSynchronize();
+
+  increment<<<1, n>>>(bucket, key);
+  cudaDeviceSynchronize();
+  
   bucketSort<<<1, n>>>(range, bucket, key, offset);
   cudaDeviceSynchronize();
 
@@ -47,4 +60,5 @@ int main()
   printf("\n");
   cudaFree(key);
   cudaFree(bucket);
+  cudaFree(offset);
 }
