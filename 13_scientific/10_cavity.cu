@@ -1,8 +1,4 @@
-#include <cstdio>
-#include <vector>
-#include <random>
 #include <iostream>
-#include <curand_kernel.h>
 using namespace std;
 
 
