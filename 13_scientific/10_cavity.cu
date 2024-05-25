@@ -7,12 +7,6 @@ using namespace std;
 
 
 
-/*__global__ void linspace(double start, double end, curandState *state,double res[]) {
-    int idx = threadIdx.x + blockIdx.x * blockDim.x;
-    
-    double random_value = curand_uniform_double(&state[idx]);
-    res[idx] = start + random_value * (end - start);
-}*/
 __global__ void zeros(double *array, int nx, int ny) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     int j = blockIdx.y * blockDim.y + threadIdx.y;
