@@ -2,6 +2,7 @@
 #include <vector>
 #include <random>
 #include <iostream>
+#include <fstream>
 using namespace std;
 
 int main (int argc, char** argv) {
@@ -19,7 +20,9 @@ int main (int argc, char** argv) {
     std::vector<std::vector<double>> v(ny, std::vector<double>(nx, 0.0));
     std::vector<std::vector<double>> p(ny, std::vector<double>(nx, 0.0));
     std::vector<std::vector<double>> b(ny, std::vector<double>(nx, 0.0));
-
+    ofstream ufile("u.dat");
+    ofstream vfile("v.dat");
+    ofstream pfile("p.dat");
     for (int n = 0; n < nt; ++n) 
     {
         for (int j = 1; j < ny - 1; ++j) 
@@ -92,7 +95,23 @@ int main (int argc, char** argv) {
             v[j][0] = 0;
             v[j][ny-1] = 0;
         }
-
+        if (n % 10 == 0) {
+        for (int j=0; j<ny; j++)
+            for (int i=0; i<nx; i++)
+            ufile << u[j][i] << " ";
+        ufile << "\n";
+        for (int j=0; j<ny; j++)
+            for (int i=0; i<nx; i++)
+            vfile << v[j][i] << " ";
+        vfile << "\n";
+        for (int j=0; j<ny; j++)
+            for (int i=0; i<nx; i++)
+            pfile << p[j][i] << " ";
+        pfile << "\n";
+        }
     }
+    ufile.close();
+    vfile.close();
+    pfile.close();
     return 0;
 }

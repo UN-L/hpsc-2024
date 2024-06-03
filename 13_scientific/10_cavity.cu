@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 using namespace std;
 
 
@@ -129,6 +130,10 @@ int main(int argc, char** argv) {
     dim3 threadsPerBlock(16, 16);
     dim3 numBlocks((nx + threadsPerBlock.x - 1) / threadsPerBlock.x, (ny + threadsPerBlock.y - 1) / threadsPerBlock.y);
 
+    ofstream ufile("u.dat");
+    ofstream vfile("v.dat");
+    ofstream pfile("p.dat");
+
     double *u;
     cudaMallocManaged(&u, ny*nx*sizeof(double));
     zeros<<<numBlocks, threadsPerBlock>>>(u, nx, ny);
@@ -180,16 +185,22 @@ int main(int argc, char** argv) {
         cudaDeviceSynchronize();
         compute_uvj<<<numBlocks, threadsPerBlock>>>(u, v, nx, ny);
         cudaDeviceSynchronize();
-    }
-
-    std::cout << "u:\n";
-    for (int i = 0; i < ny; i++) {
-        for (int j = 0; j < nx; j++) {
-            std::cout << u[i * nx + j] << " ";
+        if (n % 10 == 0) {
+            for (int j=0; j<ny; j++)
+                for (int i=0; i<nx; i++)
+                ufile << u[j * ny + i] << " ";
+            ufile << "\n";
+            for (int j=0; j<ny; j++)
+                for (int i=0; i<nx; i++)
+                vfile << v[j * ny + i] << " ";
+            vfile << "\n";
+            for (int j=0; j<ny; j++)
+                for (int i=0; i<nx; i++)
+                pfile << p[j * ny + i] << " ";
+            pfile << "\n";
         }
-        std::cout << std::endl;
     }
-
+   
     cudaFree(u);
     cudaFree(v);
     cudaFree(p);
@@ -197,6 +208,8 @@ int main(int argc, char** argv) {
     cudaFree(pn);
     cudaFree(un);
     cudaFree(vn);
-
+    ufile.close();
+    vfile.close();
+    pfile.close();
     return 0;
 }
