@@ -1,3 +1,7 @@
+/**
+ * @authors @UN-L, @Agentcastor and @TheKingHydra
+ * Report made in collaboration: @UN-L - 24R51513, @Agentcastor - 24R51516 and @TheKingHydra - 24R51515
+*/
 #include <cstdio>
 #include <vector>
 #include <random>
